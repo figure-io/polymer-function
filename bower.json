@@ -1,0 +1,64 @@
+{
+  "name": "polymer-function",
+  "version": "0.0.0",
+  "description": "A Polymer web component for displaying a function between specified limits.",
+  "authors": [
+    {
+      "name": "Philipp Burckhardt",
+      "email": "pburckhardt@outlook.com"
+    }
+  ],
+  "main": [
+    "polymer-function.html"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/figure-io/polymer-function"
+  },
+  "keywords": [
+    "polymer",
+    "web-components",
+    "web",
+    "component",
+    "visualization",
+    "viz",
+    "ui",
+    "figure",
+    "fig",
+    "chart",
+    "graph",
+    "data",
+    "metrics",
+    "lines",
+    "line",
+    "plot",
+    "d3",
+    "svg"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.3",
+    "paper-slider": "PolymerElements/paper-slider#^1.0.0",
+    "paper-material": "PolymerElements/paper-material#~1.0.1"
+  },
+  "devDependencies": {
+    "web-component-tester": "*",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.3",
+    "test-fixture": "polymerelements/test-fixture#^1.0.0"
+  },
+  "ignore": [
+    "test",
+    "node_modules",
+    "bower",
+    "src",
+    "etc",
+    "TODO.md",
+    ".*",
+    "Makefile",
+    "package.json",
+    "wct.conf.js"
+  ],
+  "license": "MIT",
+  "resolutions": {
+    "webcomponentsjs": "^0.7.3"
+  }
+}

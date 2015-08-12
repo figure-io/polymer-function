@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Polymer | Function Plot</title>
+
+		<link rel="shortcut icon" href="favicon.ico">
+
+		<!-- Load webcomponents.js for polyfill support -->
+		<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+		<!-- Default to using the shady DOM -->
+		<script>
+			window.Polymer = window.Polymer || {};
+			window.Polymer.dom = 'shadow';
+		</script>
+
+		<!-- Stylesheets -->
+		<link rel="stylesheet" href="./css/styles.css">
+
+		<!-- Load components -->
+		<link rel="import" href="../polymer-function.html">
+	</head>
+	<body unresolved>
+
+		<figure class="figure" id="figure1">
+			<polymer-function class="chart"></polymer-function>
+		</figure>
+		<figure class="figure" id="figure2">
+			<polymer-function class="chart"></polymer-function>
+		</figure>
+
+		<script type="text/javascript" src="./js/script.js"></script>
+
+	</body>
+</html>

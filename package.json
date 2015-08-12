@@ -1,0 +1,86 @@
+{
+  "name": "polymer-function",
+  "version": "0.0.0",
+  "description": "A Polymer web component for plotting a function between specified limits.",
+  "author": {
+    "name": "Philipp Burckhardt",
+    "email": "pburckhardt@outlook.com"
+  },
+  "contributors": [
+    {
+      "name": "Philipp Burckhardt",
+      "email": "pburckhardt@outlook.com"
+    }
+  ],
+  "scripts": {
+    "test": "make test",
+    "test-cov": "make test-cov",
+    "coveralls": "make coveralls"
+  },
+  "main": "",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/figure-io/polymer-function.git"
+  },
+  "keywords": [
+    "polymer",
+    "web-components",
+    "web",
+    "component",
+    "visualization",
+    "viz",
+    "ui",
+    "figure",
+    "fig",
+    "chart",
+    "graph",
+    "data",
+    "metrics",
+    "lines",
+    "line",
+    "plot",
+    "scatterplot",
+    "d3",
+    "svg"
+  ],
+  "bugs": {
+    "url": "https://github.com/figure-io/polymer-function/issues"
+  },
+  "dependencies": {
+    "compute-linspace": "^1.0.0",
+    "next-tick": "^0.2.2",
+    "node-uuid": "^1.4.3",
+    "readable-stream": "^2.0.0",
+    "shallow-equals": "0.0.0",
+    "validate.io-array": "^1.0.6",
+    "validate.io-array-array": "^1.0.0",
+    "validate.io-boolean-primitive": "^1.0.0",
+    "validate.io-contains": "^1.0.0",
+    "validate.io-function": "^1.0.2",
+    "validate.io-nonnegative-integer": "^1.0.0",
+    "validate.io-number-primitive": "^1.0.0",
+    "validate.io-object": "^1.0.4",
+    "validate.io-object-array": "^1.0.0",
+    "validate.io-positive": "^1.0.0",
+    "validate.io-positive-integer": "^1.0.0",
+    "validate.io-string-array": "^1.0.0",
+    "validate.io-string-primitive": "^1.0.0"
+  },
+  "devDependencies": {
+    "bower": "^1.4.1",
+    "browserify": "^10.2.4",
+    "chai": "3.x.x",
+    "coveralls": "^2.11.2",
+    "d3": "^3.5.5",
+    "istanbul": "^0.3.15",
+    "jshint": "2.x.x",
+    "jshint-stylish": "2.x.x",
+    "mocha": "2.x.x",
+    "vulcanize": "^1.9.2",
+    "wct-local": "^1.4.1",
+    "wct-sauce": "^1.6.0",
+    "web-component-tester": "^3.1.7",
+    "web-component-tester-istanbul": "^0.8.0"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,38 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-slider/paper-slider.html">
+<link rel="import" href="../../paper-material/paper-material.html">
+
+<!--
+	Element for displaying a line plot of a function between specified limits.
+
+	Example:
+		<polymer-function id="chart"></polymer-function>
+
+	@element polymer-function
+	@status unstable
+-->
+
+<dom-module id="polymer-function">
+
+	<!-- STYLESHEETS -->
+	<link rel="import" type="css" href="./css/reset.css">
+	<link rel="import" type="css" href="./css/styles.css">
+	<link rel="import" type="css" href="./css/controls.css">
+	<link rel="import" type="css" href="./css/chart.css">
+	<link rel="import" type="css" href="./css/media-queries.css">
+
+	<!-- PRESENTATION CONTENT -->
+	<template>
+		<div class="manipulate" id="manipulate">
+			<h1>Controls:</h1>
+			<paper-material id="controlElems" elevation="1">
+			</paper-material>
+		</div>
+		<div class="chart" id="chart">
+		</div>
+	</template>
+
+	<!-- REGISTRATION -->
+	<script src="./js/script.js"></script>
+
+</dom-module>
