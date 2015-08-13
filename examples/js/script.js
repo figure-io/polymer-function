@@ -22,23 +22,28 @@
 	el = charts[ 1 ];
 
 	el.xMin = 0;
-	el.xMax = 1;
+	el.xMax = 4;
+	el.yMin = 0;
+	el.yMax = 60;
 	el.xLabel = 'x-axis';
 	el.yLabel = 'y-axis';
-	el.title = 'Example Plot';
 	el.color = 'blue';
-	/*
-	el.labels = [
-		'cpu.utilization',
-		'mem.utilization',
-		'disk.utilization'
-	];
-	*/
-	/*
-	el.annotations = [
-		[ 1417564926959, 'beep boop bap foo' ]
-	];
-	*/
 
+	el.addControls([
+		{
+			'name':'a',
+			'min':0,
+			'max':4
+		},
+		{
+			'name':'b',
+			'min':0,
+			'max':30,
+			'step':1
+		}
+	]);
+	el.fun = function( x ) {
+		return this.a * Math.pow( x, 2 ) + this.b;
+	};
 
 })();

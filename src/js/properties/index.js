@@ -316,19 +316,17 @@ props.samples = {
 };
 
 /**
-* Object controlling the variables which can be manipulated by the user.
+* Array controlling the variables which can be manipulated by the user.
 *
 * @type {Object}
-* @default empty object
+* @default empty array
 */
 props.manipulate = {
-	'observer': '_manipulateChanged',
-	'type': Object,
+	'type': Array,
 	'value': function() {
-		return {};
+		return [];
 	}
 };
-
 
 // EXPORTS //
 

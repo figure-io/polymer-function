@@ -20,8 +20,7 @@ function create() {
 		._createData()
 		._createPaths()
 		._createAxes()
-		._createTitle()
-		._createControls();
+		._createTitle();
 		/*
 		._createAnnotations()
 		._createLegend();

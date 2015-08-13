@@ -1,11 +1,18 @@
+#wrapper {
+	width: auto;
+	height: 100%;
+	padding: 10px;
+}
+
+
 .manipulate {
-	position: relative;
-	width: 80%;
-	height: 20%;
+	display: none;
+	width: 40%;
+	padding: 2%;
 }
 
 #controlElems {
-	width: 50%;
+	width: 100%;
 	padding: 10px;
 	font-family: 'Roboto Mono', 'Consolas', 'Menlo', monospace;
 	font-size: 14px;
@@ -13,6 +20,7 @@
 
 .slider {
 	width: 80%;
+	height: 30px;
 	display: inline-block;
 	position: relative;
 }
@@ -22,6 +30,5 @@ h1 {
 	font-size: 1.3em;
 	font-weight: 300;
 	letter-spacing: -.018em;
-	line-height: 48px;
 	position: relative;
 }

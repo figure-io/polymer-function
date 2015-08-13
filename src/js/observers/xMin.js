@@ -35,11 +35,23 @@ function xMinChanged( newVal, oldVal ) {
 	// [1] Update the xScale:
 	xScale.domain( domain );
 
+	// [2] Create new data points:
+	this._resetData();
+
+	// [3] Update the yDomain:
+	domain = this._yDomain( this.yMin, this.yMax );
+
+	// [4] Update the yScale:
+	this._yScale.domain( domain );
+
 	if ( this.autoUpdate ) {
-		// [2] Update the xAxis:
+		// [5] Update the xAxis:
 		this.$.xAxis.call( this._xAxis );
 
-		// [3] Update the paths:
+		// [6] Update the yAxis:
+		this.$.yAxis.call( this._yAxis );
+
+		// [7] Update the paths:
 		this._resetPaths();
 	}
 	this.fire( 'xMin', {

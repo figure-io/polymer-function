@@ -11514,14 +11514,21 @@ table {
 
 </style>
 	<style>
+#wrapper {
+	width: auto;
+	height: 100%;
+	padding: 10px;
+}
+
+
 .manipulate {
-	position: relative;
-	width: 80%;
-	height: 20%;
+	display: none;
+	width: 40%;
+	padding: 2%;
 }
 
 #controlElems {
-	width: 50%;
+	width: 100%;
 	padding: 10px;
 	font-family: 'Roboto Mono', 'Consolas', 'Menlo', monospace;
 	font-size: 14px;
@@ -11529,6 +11536,7 @@ table {
 
 .slider {
 	width: 80%;
+	height: 30px;
 	display: inline-block;
 	position: relative;
 }
@@ -11538,13 +11546,11 @@ h1 {
 	font-size: 1.3em;
 	font-weight: 300;
 	letter-spacing: -.018em;
-	line-height: 48px;
 	position: relative;
 }
 
 </style>
 	<style>
-
 .canvas {
 	display: block;
 	margin: 0 auto;
@@ -11624,12 +11630,17 @@ h1 {
 
 	
 	<template>
-		<div class="manipulate" id="manipulate">
-			<h1>Controls:</h1>
-			<paper-material id="controlElems" elevation="1">
+		<div id="wrapper">
+			<paper-material class="manipulate" id="manipulate" elevation="2">
+				<h1>Controls:</h1>
+				<div id="controlElems">
+					<template is="dom-repeat" items="{{manipulate}}">
+						<div>{{item.name}}</div>
+						<paper-slider class="slider" step="[[_computeDefaultStep(item)]]" min="{{item.min}}" max="{{item.max}}" value="{{item.value}}" editable="true" on-change="onSliderChange"></paper-slider>
+					</template>
+				</div>
 			</paper-material>
-		</div>
-		<div class="chart" id="chart">
+			<div class="chart" id="chart"></div>
 		</div>
 	</template>
 
@@ -11803,44 +11814,6 @@ module.exports = createBase;
 },{}],4:[function(require,module,exports){
 'use strict';
 
-/**
-* FUNCTION: createControls()
-*	Creates a controls element.
-*
-* @returns {Object} context
-*/
-function createControls() {
-	/* jshint validthis:true */
-	// Remove any existing background...
-	if ( this.$.controls ) {
-		this.$.controls.remove();
-	}
-	this.manipulate = [{
-		'name': 'lambda'
-	}];
-
-
-	var controlElemsDIV = this._d3.select( this.$.controlElems );
-	this.$.controls = controlElemsDIV.selectAll( 'div' )
-		.data( this.manipulate )
-		.enter()
-		.append( 'div' )
-			.attr( 'class', 'control' )
-			.html( function( d ) {
-				return '<div>' + d.name + '</div><paper-slider class="slider" editable="true"></paper-slider>';
-			});
-
-	return this;
-} // end FUNCTION createBackground()
-
-
-// EXPORTS //
-
-module.exports = createControls;
-
-},{}],5:[function(require,module,exports){
-'use strict';
-
 // MODULES //
 
 var linspace = require( 'compute-linspace' );
@@ -11879,7 +11852,7 @@ function createData() {
 
 module.exports = createData;
 
-},{"compute-linspace":55}],6:[function(require,module,exports){
+},{"compute-linspace":59}],5:[function(require,module,exports){
 'use strict';
 
 /**
@@ -11902,8 +11875,7 @@ function create() {
 		._createData()
 		._createPaths()
 		._createAxes()
-		._createTitle()
-		._createControls();
+		._createTitle();
 		/*
 		._createAnnotations()
 		._createLegend();
@@ -11917,7 +11889,7 @@ function create() {
 
 module.exports = create;
 
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 /**
@@ -11958,7 +11930,7 @@ function createPaths() {
 
 module.exports = createPaths;
 
-},{}],8:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 /**
@@ -11987,7 +11959,7 @@ function createTitle() {
 
 module.exports = createTitle;
 
-},{}],9:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 
 // ELEMENT //
@@ -11999,9 +11971,17 @@ var element = {};
 
 element.is = require( './name' );
 
+
 // PROPERTIES //
 
 element.properties = require( './properties' );
+
+// MULTI-PROPERTY AND ARRAY OBSERVERS //
+
+element.observers = [
+	'_manipulateChanged(manipulate.splices)'
+];
+
 
 // LIFECYCLE //
 
@@ -12013,9 +11993,11 @@ element.attached = require( './lifecycle/attached.js' );
 
 element.detached = require( './lifecycle/detached.js' );
 
+
 // INIT //
 
 element._init = require( './init' );
+
 
 // CHART CREATION //
 
@@ -12033,11 +12015,8 @@ element._createAxes = require( './create/axes.js' );
 
 element._createTitle = require( './create/title.js' );
 
-element._createControls = require( './create/controls.js' );
 
 // RESET //
-
-element._resetControls = require( './reset/controls.js' );
 
 element._resetData = require( './reset/data.js' );
 
@@ -12049,6 +12028,9 @@ element._resetPaths = require( './reset/paths.js' );
 element._addListeners = require( './listeners/add.js' );
 
 element._removeListeners = require( './listeners/remove.js' );
+
+element.onSliderChange = require( './listeners/sliderChange.js' );
+
 
 // OBSERVERS //
 
@@ -12102,6 +12084,21 @@ element._samplesChanged = require( './observers/samples.js' );
 
 element._manipulateChanged = require( './observers/manipulate.js' );
 
+
+// MANIPULATE //
+
+element._computeDefaultStep = require( './manipulate/computeDefaultStep.js' );
+
+// PUBLIC CONTROL METHODS //
+
+element.addControl = require( './manipulate/addControl.js' );
+
+element.removeControl = require( './manipulate/removeControl.js' );
+
+element.addControls = require( './manipulate/addControls' );
+
+element.resetControls = require( './manipulate/resetControls.js' );
+
 // UTILS //
 
 element._graphWidth = require( './utils/graphWidth.js' );
@@ -12112,11 +12109,12 @@ element._xDomain = require( './utils/xDomain.js' );
 
 element._yDomain = require( './utils/yDomain.js' );
 
+
 // EXPORTS //
 
 module.exports = element;
 
-},{"./create":6,"./create/axes.js":1,"./create/background.js":2,"./create/base.js":3,"./create/controls.js":4,"./create/data.js":5,"./create/paths.js":7,"./create/title.js":8,"./init":11,"./lifecycle/attached.js":12,"./lifecycle/created.js":13,"./lifecycle/detached.js":14,"./lifecycle/ready.js":15,"./listeners/add.js":16,"./listeners/remove.js":17,"./name":18,"./observers/autoResize.js":19,"./observers/autoUpdate.js":20,"./observers/color.js":21,"./observers/function.js":22,"./observers/height.js":23,"./observers/interpolation.js":24,"./observers/manipulate.js":25,"./observers/paddingBottom.js":26,"./observers/paddingLeft.js":27,"./observers/paddingRight.js":28,"./observers/paddingTop.js":29,"./observers/samples.js":30,"./observers/tension.js":31,"./observers/title.js":32,"./observers/width.js":33,"./observers/xAxisOrient.js":34,"./observers/xLabel.js":35,"./observers/xMax.js":36,"./observers/xMin.js":37,"./observers/xNumTicks.js":38,"./observers/yAxisOrient.js":39,"./observers/yLabel.js":40,"./observers/yMax.js":41,"./observers/yMin.js":42,"./observers/yNumTicks.js":43,"./properties":45,"./reset/controls.js":46,"./reset/data.js":47,"./reset/paths.js":48,"./utils/graphHeight.js":49,"./utils/graphWidth.js":50,"./utils/xDomain.js":52,"./utils/yDomain.js":54}],10:[function(require,module,exports){
+},{"./create":5,"./create/axes.js":1,"./create/background.js":2,"./create/base.js":3,"./create/data.js":4,"./create/paths.js":6,"./create/title.js":7,"./init":10,"./lifecycle/attached.js":11,"./lifecycle/created.js":12,"./lifecycle/detached.js":13,"./lifecycle/ready.js":14,"./listeners/add.js":15,"./listeners/remove.js":16,"./listeners/sliderChange.js":17,"./manipulate/addControl.js":18,"./manipulate/addControls":19,"./manipulate/computeDefaultStep.js":20,"./manipulate/removeControl.js":21,"./manipulate/resetControls.js":22,"./name":23,"./observers/autoResize.js":24,"./observers/autoUpdate.js":25,"./observers/color.js":26,"./observers/function.js":27,"./observers/height.js":28,"./observers/interpolation.js":29,"./observers/manipulate.js":30,"./observers/paddingBottom.js":31,"./observers/paddingLeft.js":32,"./observers/paddingRight.js":33,"./observers/paddingTop.js":34,"./observers/samples.js":35,"./observers/tension.js":36,"./observers/title.js":37,"./observers/width.js":38,"./observers/xAxisOrient.js":39,"./observers/xLabel.js":40,"./observers/xMax.js":41,"./observers/xMin.js":42,"./observers/xNumTicks.js":43,"./observers/yAxisOrient.js":44,"./observers/yLabel.js":45,"./observers/yMax.js":46,"./observers/yMin.js":47,"./observers/yNumTicks.js":48,"./properties":50,"./reset/data.js":51,"./reset/paths.js":52,"./utils/graphHeight.js":53,"./utils/graphWidth.js":54,"./utils/xDomain.js":56,"./utils/yDomain.js":58}],9:[function(require,module,exports){
 'use strict';
 
 /**
@@ -12158,7 +12156,7 @@ function cache( $ ) {
 
 module.exports = cache;
 
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -12253,7 +12251,7 @@ function init() {
 
 module.exports = init;
 
-},{"./../utils/x.js":51,"./../utils/y.js":53,"./cache.js":10,"d3":58,"node-uuid":59}],12:[function(require,module,exports){
+},{"./../utils/x.js":55,"./../utils/y.js":57,"./cache.js":9,"d3":62,"node-uuid":63}],11:[function(require,module,exports){
 'use strict';
 
 /**
@@ -12271,7 +12269,7 @@ function attached() {
 
 module.exports = attached;
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 /**
@@ -12287,7 +12285,7 @@ function created() {
 
 module.exports = created;
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 /**
@@ -12304,7 +12302,7 @@ function detached() {
 
 module.exports = detached;
 
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 /**
@@ -12321,7 +12319,7 @@ function ready() {
 
 module.exports = ready;
 
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /* global window */
 'use strict';
 
@@ -12345,7 +12343,7 @@ function addListeners() {
 
 module.exports = addListeners;
 
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /* global window */
 'use strict';
 
@@ -12366,14 +12364,266 @@ function removeListeners() {
 
 module.exports = removeListeners;
 
+},{}],17:[function(require,module,exports){
+'use strict';
+
+/**
+* FUNCTION: onSliderChange( evt )
+*	Event handler invoked on a 'sliderChange' event.
+*
+* @param {Event} evt - event object
+* @returns {Boolean} true
+*/
+	function onSliderChange( evt ) {
+	/* jshint validthis:true */
+	var model, item, domain;
+
+	model = evt.model;
+	item = model.item;
+
+	// [0] Set parameter
+	this[ item.name ] = item.value;
+
+	// [1] Create new data points:
+	this._resetData();
+
+	// [2] Update the xDomain:
+	domain = this._xDomain( this.xMin, this.xMax );
+
+	// [3] Update the xScale:
+	this._xScale.domain( domain );
+
+	// [4] Update the yDomain:
+	domain = this._yDomain( this.yMin, this.yMax );
+
+	// [5] Update the yScale:
+	this._yScale.domain( domain );
+
+	if ( this.autoUpdate ) {
+		// [6] Update the xAxis:
+		this.$.xAxis.call( this._xAxis );
+
+		// [7] Update the yAxis:
+		this.$.yAxis.call( this._yAxis );
+
+		// [8] Create new paths:
+		this._resetPaths();
+	}
+
+	return true;
+} // end FUNCTION onSliderChange()
+
+// EXPORTS //
+
+module.exports = onSliderChange;
+
 },{}],18:[function(require,module,exports){
+'use strict';
+
+// MODULES //
+
+var isObject = require( 'validate.io-object' );
+
+
+// ADD CONTROL //
+
+/**
+* FUNCTION addControl( config )
+*	Adds a control element as specified by `config`.
+*
+* @param {Object} config - configuration object for control element
+*/
+function addControl( config ) {
+	/* jshint validthis:true */
+	var err,
+		i;
+
+	if ( !isObject( config ) ) {
+		err = new TypeError( 'addControl::input argument has to be an object. Value: `' + config + '`' );
+		throw( err );
+	}
+
+	if ( !(config.hasOwnProperty( 'name' ) &&
+		config.hasOwnProperty( 'min' ) && config.hasOwnProperty( 'max' ) )
+	) {
+		err = new Error( 'addControl::input argument must have `name`, min` and `max` properties. Keys: `' + Object.keys( config) );
+		throw( err );
+	}
+
+	// Check that control element with the same `name` does not already exist
+	for ( i = 0; i < this.manipulate.length; i++ ) {
+		if ( this.manipulate[ i ].name === config.name ) {
+			err = new Error( 'addControl::control element with name `' + config.name + '` already exists.' );
+			throw( err );
+		}
+	}
+
+	// Set default value if not set by user
+	if ( !config.value ) {
+		config.value = ( config.max - config.min ) / 2;
+	}
+
+	this.push( 'manipulate', config );
+} // end FUNCTION addControl()
+
+// EXPORTS //
+
+module.exports = addControl;
+
+},{"validate.io-object":73}],19:[function(require,module,exports){
+'use strict';
+
+// MODULES //
+
+var isArray = require( 'validate.io-array' );
+
+
+// FUNCTIONS //
+
+var addControl = require( './addControl.js' );
+
+
+// ADD CONTROLS //
+
+/**
+* FUNCTION addControls( arr )
+*	Add multiple control elements at once.
+*
+* @param {Array} arr - array of config objects
+*/
+function addControls( arr ) {
+	/* jshint validthis:true */
+	var err,
+		len,
+		i;
+
+	if ( !isArray( arr ) ) {
+		err = new TypeError( 'addControls::Input argument has to be an array. Value: `' + arr + '`' );
+		throw( err );
+	}
+
+	len = arr.length;
+	for ( i = 0; i < len; i++ ) {
+		addControl.call( this, arr[ i ] );
+	}
+} // end FUNCTION addControls()
+
+
+// EXPORTS //
+
+module.exports = addControls;
+
+},{"./addControl.js":18,"validate.io-array":64}],20:[function(require,module,exports){
+'use strict';
+
+// MODULES //
+
+var isNumber = require( 'validate.io-number-primitive' );
+
+
+// DEFAULT STEP SIZE //
+
+/**
+* FUNCTION computeDefaultStep( item )
+*	Computes the default step size for the slider element.
+*
+*/
+function computeDefaultStep( item ) {
+	var step,
+		range,
+		err;
+
+	if ( item.step ) {
+		if ( !isNumber( item.step ) ) {
+			err = new TypeError( 'Step property must be a number primitive.' );
+			throw( err );
+		}
+		step = item.step;
+	} else {
+		range = item.max - item.min;
+		step = Math.round( range / 20 );
+	}
+
+	return step;
+} // end FUNCTION computeDefaultStep()
+
+
+// EXPORTS //
+
+module.exports = computeDefaultStep;
+
+},{"validate.io-number-primitive":72}],21:[function(require,module,exports){
+'use strict';
+
+// MODULES //
+
+var isString = require( 'validate.io-string-primitive' );
+
+
+// REMOVE CONTROL //
+
+/**
+* FUNCTION removeControl( name )
+*	Removes the control element with the supplied `name`.
+*
+* @param {String} name - name of the control element to be removed
+*/
+function removeControl( name ) {
+	/* jshint validthis:true */
+	var err,
+		success = false,
+		len,
+		i, id;
+
+	if ( !isString( name ) ) {
+		err = new TypeError( 'removeControl::argument has to be a string primitive.' );
+		throw( err );
+	}
+
+	len = this.manipulate.length;
+	for ( i = 0; i < len; i++ ) {
+		if ( this.manipulate[ i ].name === name ) {
+			id = i;
+			success = true;
+			this.splice( 'manipulate', id, 1 );
+			break;
+		}
+	}
+	return success;
+} // end FUNCTION removeControl()
+
+
+// EXPORTS //
+
+module.exports = removeControl;
+
+},{"validate.io-string-primitive":79}],22:[function(require,module,exports){
+'use strict';
+
+/**
+* FUNCTION resetControls()
+*	Removes all control elements from the current plot.
+*
+*/
+function resetControls() {
+	/* jshint validthis:true */
+	var len;
+	len = this.manipulate.length;
+	this.splice( 'manipulate', 0, len );
+} // end FUNCTION resetControls()
+
+// EXPORTS //
+
+module.exports = resetControls;
+
+},{}],23:[function(require,module,exports){
 'use strict';
 
 // EXPORTS //
 
 module.exports = 'polymer-function';
 
-},{}],19:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 /* global window */
 'use strict';
 
@@ -12420,7 +12670,7 @@ function autoResizeChanged( newVal, oldVal ) {
 
 module.exports = autoResizeChanged;
 
-},{"validate.io-boolean-primitive":61}],20:[function(require,module,exports){
+},{"validate.io-boolean-primitive":65}],25:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -12461,7 +12711,7 @@ function autoUpdateChanged( newVal, oldVal ) {
 
 module.exports = autoUpdateChanged;
 
-},{"validate.io-boolean-primitive":61}],21:[function(require,module,exports){
+},{"validate.io-boolean-primitive":65}],26:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -12510,7 +12760,7 @@ function colorChanged( newVal, oldVal ) {
 
 module.exports = colorChanged;
 
-},{"validate.io-string-primitive":76}],22:[function(require,module,exports){
+},{"validate.io-string-primitive":79}],27:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -12586,7 +12836,7 @@ function funChanged( newVal, oldVal ) {
 
 module.exports = funChanged;
 
-},{"validate.io-function":64}],23:[function(require,module,exports){
+},{"validate.io-function":68}],28:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -12667,7 +12917,7 @@ function heightChanged( newVal, oldVal ) {
 
 module.exports = heightChanged;
 
-},{"validate.io-positive":74}],24:[function(require,module,exports){
+},{"validate.io-positive":77}],29:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -12732,56 +12982,45 @@ function interpolationChanged( newVal, oldVal ) {
 
 module.exports = interpolationChanged;
 
-},{"validate.io-contains":62,"validate.io-string-primitive":76}],25:[function(require,module,exports){
+},{"validate.io-contains":66,"validate.io-string-primitive":79}],30:[function(require,module,exports){
 'use strict';
 
-// MODULES //
-
-var isObjectArray = require( 'validate.io-object-array' );
-
-
-// OBSERVER
+// OBSERVER //
 
 /**
 * FUNCTION manipulateChanged( oldVal, newVal )
 *	Event handler invoked when the `manipulate` property changes.
 *
-* @param {Object} newVal - new value
-* @param {Object} oldVal - old value
+* @param {Object} changeRecord - object with `keySplices` and `indexSplices`
 */
 function manipulateChanged( changeRecord ) {
 	/* jshint validthis:true */
-	var err;
+	var self = this,
+		item;
 
-	changeRecord.indexSplices.forEach(function(s) {
-		s.removed.forEach(function(user) {
-			console.log(user.name + ' was removed');
+	if ( changeRecord ) {
+		changeRecord.keySplices.forEach( function( s ) {
+			if ( s.added.length === 1 ) {
+				// Add a new control element
+				item = self.manipulate[ s.index ];
+				self[ item.name ] = item.value;
+			}
 		});
-	}, this);
 
-	/*
-	if ( oldVal === void 0 ) {
-		return;
+		changeRecord.indexSplices.forEach( function( s ) {
+			// Display manipulate panel if at least one control element is present
+			if ( s.object.length > 0 ) {
+				self.$.manipulate.style.display = 'block';
+			} else if ( s.object.length === 0 ) {
+				// Do not display manipulate panel if no control elements are present
+				self.$.manipulate.style.display = 'none';
+			}
+			// Remove properties from Polymer element
+			s.removed.forEach( function( control ) {
+				delete self[ control.name ];
+			});
+		});
 	}
-
-	if ( !isObjectArray( newVal ) ) {
-		err = new TypeError( 'manipulate::invalid assignment. Must be an object array. Value: `' + newVal + '`.' );
-		this.fire( 'err', err );
-		this.manipulate = oldVal;
-		return;
-	}
-	if ( this.autoUpdate ) {
-		// [1] Create new controls:
-		console.log( newVal )
-		this._resetControls( newVal );
-	}
-
-	this.fire( 'change', {
-		'attr': 'manipulate',
-		'prev': oldVal,
-		'curr': newVal
-	});
-	*/
 }  // end FUNCTION manipulateChanged()
 
 
@@ -12789,7 +13028,7 @@ function manipulateChanged( changeRecord ) {
 
 module.exports = manipulateChanged;
 
-},{"validate.io-object-array":69}],26:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -12861,7 +13100,7 @@ function paddingBottomChanged( newVal, oldVal ) {
 
 module.exports = paddingBottomChanged;
 
-},{"validate.io-nonnegative-integer":65}],27:[function(require,module,exports){
+},{"validate.io-nonnegative-integer":69}],32:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -12933,7 +13172,7 @@ function paddingLeftChanged( newVal, oldVal ) {
 
 module.exports = paddingLeftChanged;
 
-},{"validate.io-nonnegative-integer":65}],28:[function(require,module,exports){
+},{"validate.io-nonnegative-integer":69}],33:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -13002,7 +13241,7 @@ function paddingRightChanged( newVal, oldVal ) {
 
 module.exports = paddingRightChanged;
 
-},{"validate.io-nonnegative-integer":65}],29:[function(require,module,exports){
+},{"validate.io-nonnegative-integer":69}],34:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -13077,7 +13316,7 @@ function paddingTopChanged( newVal, oldVal ) {
 
 module.exports = paddingTopChanged;
 
-},{"validate.io-nonnegative-integer":65}],30:[function(require,module,exports){
+},{"validate.io-nonnegative-integer":69}],35:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -13129,7 +13368,7 @@ function samplesChanged( newVal, oldVal ) {
 
 module.exports = samplesChanged;
 
-},{"validate.io-positive-integer":71}],31:[function(require,module,exports){
+},{"validate.io-positive-integer":74}],36:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -13174,7 +13413,7 @@ function tensionChanged( newVal, oldVal ) {
 
 module.exports = tensionChanged;
 
-},{"validate.io-number-primitive":68}],32:[function(require,module,exports){
+},{"validate.io-number-primitive":72}],37:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -13218,7 +13457,7 @@ function titleChanged( newVal, oldVal ) {
 
 module.exports = titleChanged;
 
-},{"validate.io-string-primitive":76}],33:[function(require,module,exports){
+},{"validate.io-string-primitive":79}],38:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -13296,7 +13535,7 @@ function widthChanged( newVal, oldVal ) {
 
 module.exports = widthChanged;
 
-},{"validate.io-positive":74}],34:[function(require,module,exports){
+},{"validate.io-positive":77}],39:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -13356,7 +13595,7 @@ function xAxisOrientChanged( newVal, oldVal ) {
 
 module.exports = xAxisOrientChanged;
 
-},{"validate.io-contains":62,"validate.io-string-primitive":76}],35:[function(require,module,exports){
+},{"validate.io-contains":66,"validate.io-string-primitive":79}],40:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -13400,7 +13639,7 @@ function xLabelChanged( newVal, oldVal ) {
 
 module.exports = xLabelChanged;
 
-},{"validate.io-string-primitive":76}],36:[function(require,module,exports){
+},{"validate.io-string-primitive":79}],41:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -13438,11 +13677,23 @@ function xMaxChanged( newVal, oldVal ) {
 	// [1] Update the xScale:
 	xScale.domain( domain );
 
+	// [2] Create new data points:
+	this._resetData();
+
+	// [3] Update the yDomain:
+	domain = this._yDomain( this.yMin, this.yMax );
+
+	// [4] Update the yScale:
+	this._yScale.domain( domain );
+
 	if ( this.autoUpdate ) {
-		// [2] Update the xAxis:
+		// [5] Update the xAxis:
 		this.$.xAxis.call( this._xAxis );
 
-		// [3] Update the paths:
+		// [6] Update the yAxis:
+		this.$.yAxis.call( this._yAxis );
+
+		// [7] Update the paths:
 		this._resetPaths();
 	}
 	this.fire( 'xMax', {
@@ -13460,7 +13711,7 @@ function xMaxChanged( newVal, oldVal ) {
 
 module.exports = xMaxChanged;
 
-},{"validate.io-number-primitive":68}],37:[function(require,module,exports){
+},{"validate.io-number-primitive":72}],42:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -13498,11 +13749,23 @@ function xMinChanged( newVal, oldVal ) {
 	// [1] Update the xScale:
 	xScale.domain( domain );
 
+	// [2] Create new data points:
+	this._resetData();
+
+	// [3] Update the yDomain:
+	domain = this._yDomain( this.yMin, this.yMax );
+
+	// [4] Update the yScale:
+	this._yScale.domain( domain );
+
 	if ( this.autoUpdate ) {
-		// [2] Update the xAxis:
+		// [5] Update the xAxis:
 		this.$.xAxis.call( this._xAxis );
 
-		// [3] Update the paths:
+		// [6] Update the yAxis:
+		this.$.yAxis.call( this._yAxis );
+
+		// [7] Update the paths:
 		this._resetPaths();
 	}
 	this.fire( 'xMin', {
@@ -13520,7 +13783,7 @@ function xMinChanged( newVal, oldVal ) {
 
 module.exports = xMinChanged;
 
-},{"validate.io-number-primitive":68}],38:[function(require,module,exports){
+},{"validate.io-number-primitive":72}],43:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -13565,7 +13828,7 @@ function xNumTicksChanged( newVal, oldVal ) {
 
 module.exports = xNumTicksChanged;
 
-},{"validate.io-nonnegative-integer":65}],39:[function(require,module,exports){
+},{"validate.io-nonnegative-integer":69}],44:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -13625,7 +13888,7 @@ function yAxisOrientChanged( newVal, oldVal ) {
 
 module.exports = yAxisOrientChanged;
 
-},{"validate.io-contains":62,"validate.io-string-primitive":76}],40:[function(require,module,exports){
+},{"validate.io-contains":66,"validate.io-string-primitive":79}],45:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -13669,7 +13932,7 @@ function yLabelChanged( newVal, oldVal ) {
 
 module.exports = yLabelChanged;
 
-},{"validate.io-string-primitive":76}],41:[function(require,module,exports){
+},{"validate.io-string-primitive":79}],46:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -13729,7 +13992,7 @@ function yMaxChanged( newVal, oldVal ) {
 
 module.exports = yMaxChanged;
 
-},{"validate.io-number-primitive":68}],42:[function(require,module,exports){
+},{"validate.io-number-primitive":72}],47:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -13789,7 +14052,7 @@ function yMinChanged( newVal, oldVal ) {
 
 module.exports = yMinChanged;
 
-},{"validate.io-number-primitive":68}],43:[function(require,module,exports){
+},{"validate.io-number-primitive":72}],48:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -13834,13 +14097,13 @@ function yNumTicksChanged( newVal, oldVal ) {
 
 module.exports = yNumTicksChanged;
 
-},{"validate.io-nonnegative-integer":65}],44:[function(require,module,exports){
+},{"validate.io-nonnegative-integer":69}],49:[function(require,module,exports){
 /* global Polymer */
 'use strict';
 
 Polymer( require( './' ) );
 
-},{"./":9}],45:[function(require,module,exports){
+},{"./":8}],50:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -14159,66 +14422,23 @@ props.samples = {
 };
 
 /**
-* Array holding the control elements.
+* Array controlling the variables which can be manipulated by the user.
 *
-* @type {Array}
+* @type {Object}
 * @default empty array
 */
 props.manipulate = {
-	'observers': [
-		'_manipulateChanged(manipulate.splices)'
-	],
 	'type': Array,
 	'value': function() {
 		return [];
 	}
 };
 
-
 // EXPORTS //
 
 module.exports = props;
 
-},{}],46:[function(require,module,exports){
-'use strict';
-
-/**
-* FUNCTION: resetControls( manipulate )
-*	Resets control elements.
-*
-* @param {Object} manipulate - new manipulate control elements
-* @returns {Object} context
-*/
-function resetControls( manipulate ) {
-	/* jshint validthis:true */
-	var elems;
-
-	// Bind the data and update existing elements:
-	elems = this.$.controls
-		.data( manipulate );
-
-	// Remove any old control elements:
-	elems.exit().remove();
-
-	// Add any new control elements:
-	elems.enter().append( 'div' )
-		.attr( 'class', 'control' )
-		.html( function( d ) {
-			return '<div>' + d.name + '</div><paper-slider class="slider" editable="true"></paper-slider>';
-		});
-
-	// Cache a reference to the control elements:
-	this.$.controls = elems;
-
-	return this;
-} // end FUNCTION resetControls()
-
-
-// EXPORTS //
-
-module.exports = resetControls;
-
-},{}],47:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -14260,7 +14480,7 @@ function resetData() {
 
 module.exports = resetData;
 
-},{"compute-linspace":55}],48:[function(require,module,exports){
+},{"compute-linspace":59}],52:[function(require,module,exports){
 'use strict';
 
 /**
@@ -14300,7 +14520,7 @@ function resetPaths() {
 
 module.exports = resetPaths;
 
-},{}],49:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 'use strict';
 
 /**
@@ -14319,7 +14539,7 @@ function graphHeight() {
 
 module.exports = graphHeight;
 
-},{}],50:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 'use strict';
 
 /**
@@ -14338,7 +14558,7 @@ function graphWidth() {
 
 module.exports = graphWidth;
 
-},{}],51:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 'use strict';
 
 /**
@@ -14366,7 +14586,7 @@ function x( xScale ) {
 
 module.exports = x;
 
-},{}],52:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -14418,7 +14638,7 @@ function xDomain( min, max ) {
 
 module.exports = xDomain;
 
-},{"validate.io-number-primitive":68}],53:[function(require,module,exports){
+},{"validate.io-number-primitive":72}],57:[function(require,module,exports){
 'use strict';
 
 /**
@@ -14446,7 +14666,7 @@ function y( yScale ) {
 
 module.exports = y;
 
-},{}],54:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -14498,7 +14718,7 @@ function yDomain( min, max ) {
 
 module.exports = yDomain;
 
-},{"validate.io-number-primitive":68}],55:[function(require,module,exports){
+},{"validate.io-number-primitive":72}],59:[function(require,module,exports){
 /**
 *
 *	COMPUTE: linspace
@@ -14588,7 +14808,7 @@ function linspace( x1, x2, len ) {
 
 module.exports = linspace;
 
-},{"validate.io-integer":56}],56:[function(require,module,exports){
+},{"validate.io-integer":60}],60:[function(require,module,exports){
 /**
 *
 *	VALIDATE: integer
@@ -14642,7 +14862,7 @@ function isInteger( value ) {
 
 module.exports = isInteger;
 
-},{"validate.io-number":57}],57:[function(require,module,exports){
+},{"validate.io-number":61}],61:[function(require,module,exports){
 /**
 *
 *	VALIDATE: number
@@ -14689,7 +14909,7 @@ function isNumber( value ) {
 
 module.exports = isNumber;
 
-},{}],58:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 !function() {
   var d3 = {
     version: "3.5.6"
@@ -24194,7 +24414,7 @@ module.exports = isNumber;
   if (typeof define === "function" && define.amd) define(d3); else if (typeof module === "object" && module.exports) module.exports = d3;
   this.d3 = d3;
 }();
-},{}],59:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 //     uuid.js
 //
 //     Copyright (c) 2010-2012 Robert Kieffer
@@ -24443,7 +24663,7 @@ module.exports = isNumber;
   }
 }).call(this);
 
-},{}],60:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 'use strict';
 
 /**
@@ -24461,7 +24681,7 @@ function isArray( value ) {
 
 module.exports = Array.isArray || isArray;
 
-},{}],61:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 /**
 *
 *	VALIDATE: boolean-primitive
@@ -24508,7 +24728,7 @@ function isBoolean( value ) {
 
 module.exports = isBoolean;
 
-},{}],62:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 /**
 *
 *	VALIDATE: contains
@@ -24582,7 +24802,7 @@ function contains( arr, value ) {
 
 module.exports = contains;
 
-},{"validate.io-array":60,"validate.io-nan-primitive":63}],63:[function(require,module,exports){
+},{"validate.io-array":64,"validate.io-nan-primitive":67}],67:[function(require,module,exports){
 /**
 *
 *	VALIDATE: nan-primitive
@@ -24629,7 +24849,7 @@ function nan( value ) {
 
 module.exports = nan;
 
-},{}],64:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 /**
 *
 *	VALIDATE: function
@@ -24676,7 +24896,7 @@ function isFunction( value ) {
 
 module.exports = isFunction;
 
-},{}],65:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 /**
 *
 *	VALIDATE: nonnegative-integer
@@ -24730,11 +24950,11 @@ function isNonNegativeInteger( value ) {
 
 module.exports = isNonNegativeInteger;
 
-},{"validate.io-integer":66}],66:[function(require,module,exports){
-arguments[4][56][0].apply(exports,arguments)
-},{"dup":56,"validate.io-number":67}],67:[function(require,module,exports){
-arguments[4][57][0].apply(exports,arguments)
-},{"dup":57}],68:[function(require,module,exports){
+},{"validate.io-integer":70}],70:[function(require,module,exports){
+arguments[4][60][0].apply(exports,arguments)
+},{"dup":60,"validate.io-number":71}],71:[function(require,module,exports){
+arguments[4][61][0].apply(exports,arguments)
+},{"dup":61}],72:[function(require,module,exports){
 /**
 *
 *	VALIDATE: number-primitive
@@ -24781,75 +25001,7 @@ function isNumber( value ) {
 
 module.exports = isNumber;
 
-},{}],69:[function(require,module,exports){
-/**
-*
-*	VALIDATE: object-array
-*
-*
-*	DESCRIPTION:
-*		- Validates if a value is an object array.
-*
-*
-*	NOTES:
-*		[1]
-*
-*
-*	TODO:
-*		[1]
-*
-*
-*	LICENSE:
-*		MIT
-*
-*	Copyright (c) 2015. Athan Reines.
-*
-*
-*	AUTHOR:
-*		Athan Reines. kgryte@gmail.com. 2015.
-*
-*/
-
-'use strict';
-
-// MODULES //
-
-var isArray = require( 'validate.io-array' ),
-	isObject = require( 'validate.io-object' );
-
-
-// IS OBJECT ARRAY //
-
-/**
-* FUNCTION: isObjectArray( value )
-*	Validates if a value is an object array.
-*
-* @param {*} value - value to be validated
-* @returns {Boolean} boolean indicating if a value is an object array
-*/
-function isObjectArray( value ) {
-	var len;
-	if ( !isArray( value ) ) {
-		return false;
-	}
-	len = value.length;
-	if ( !len ) {
-		return false;
-	}
-	for ( var i = 0; i < len; i++ ) {
-		if ( !isObject( value[i] ) ) {
-			return false;
-		}
-	}
-	return true;
-} // end FUNCTION isObjectArray()
-
-
-// EXPORTS //
-
-module.exports = isObjectArray;
-
-},{"validate.io-array":60,"validate.io-object":70}],70:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 'use strict';
 
 // MODULES //
@@ -24875,7 +25027,7 @@ function isObject( value ) {
 
 module.exports = isObject;
 
-},{"validate.io-array":60}],71:[function(require,module,exports){
+},{"validate.io-array":64}],74:[function(require,module,exports){
 /**
 *
 *	VALIDATE: positive-integer
@@ -24929,11 +25081,11 @@ function isPositiveInteger( value ) {
 
 module.exports = isPositiveInteger;
 
-},{"validate.io-integer":72}],72:[function(require,module,exports){
-arguments[4][56][0].apply(exports,arguments)
-},{"dup":56,"validate.io-number":73}],73:[function(require,module,exports){
-arguments[4][57][0].apply(exports,arguments)
-},{"dup":57}],74:[function(require,module,exports){
+},{"validate.io-integer":75}],75:[function(require,module,exports){
+arguments[4][60][0].apply(exports,arguments)
+},{"dup":60,"validate.io-number":76}],76:[function(require,module,exports){
+arguments[4][61][0].apply(exports,arguments)
+},{"dup":61}],77:[function(require,module,exports){
 /**
 *
 *	VALIDATE: positive
@@ -24987,9 +25139,9 @@ function isPositive( value ) {
 
 module.exports = isPositive;
 
-},{"validate.io-number":75}],75:[function(require,module,exports){
-arguments[4][57][0].apply(exports,arguments)
-},{"dup":57}],76:[function(require,module,exports){
+},{"validate.io-number":78}],78:[function(require,module,exports){
+arguments[4][61][0].apply(exports,arguments)
+},{"dup":61}],79:[function(require,module,exports){
 /**
 *
 *	VALIDATE: string-primitive
@@ -25036,7 +25188,7 @@ function isString( value ) {
 
 module.exports = isString;
 
-},{}]},{},[44]);
+},{}]},{},[49]);
 </script>
 
 </dom-module>

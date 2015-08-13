@@ -23,12 +23,18 @@
 
 	<!-- PRESENTATION CONTENT -->
 	<template>
-		<div class="manipulate" id="manipulate">
-			<h1>Controls:</h1>
-			<paper-material id="controlElems" elevation="1">
+		<div id="wrapper">
+			<paper-material class="manipulate" id="manipulate" elevation="2">
+				<h1>Controls:</h1>
+				<div id="controlElems">
+					<template is="dom-repeat" items="{{manipulate}}">
+						<div>{{item.name}}</div>
+						<paper-slider class="slider" step="[[_computeDefaultStep(item)]]" min="{{item.min}}" max="{{item.max}}" value="{{item.value}}"
+						editable="true" on-change="onSliderChange"></paper-slider>
+					</template>
+				</div>
 			</paper-material>
-		</div>
-		<div class="chart" id="chart">
+			<div class="chart" id="chart"></div>
 		</div>
 	</template>
 

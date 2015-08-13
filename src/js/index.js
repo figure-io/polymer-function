@@ -9,9 +9,17 @@ var element = {};
 
 element.is = require( './name' );
 
+
 // PROPERTIES //
 
 element.properties = require( './properties' );
+
+// MULTI-PROPERTY AND ARRAY OBSERVERS //
+
+element.observers = [
+	'_manipulateChanged(manipulate.splices)'
+];
+
 
 // LIFECYCLE //
 
@@ -23,9 +31,11 @@ element.attached = require( './lifecycle/attached.js' );
 
 element.detached = require( './lifecycle/detached.js' );
 
+
 // INIT //
 
 element._init = require( './init' );
+
 
 // CHART CREATION //
 
@@ -43,11 +53,8 @@ element._createAxes = require( './create/axes.js' );
 
 element._createTitle = require( './create/title.js' );
 
-element._createControls = require( './create/controls.js' );
 
 // RESET //
-
-element._resetControls = require( './reset/controls.js' );
 
 element._resetData = require( './reset/data.js' );
 
@@ -59,6 +66,9 @@ element._resetPaths = require( './reset/paths.js' );
 element._addListeners = require( './listeners/add.js' );
 
 element._removeListeners = require( './listeners/remove.js' );
+
+element.onSliderChange = require( './listeners/sliderChange.js' );
+
 
 // OBSERVERS //
 
@@ -112,6 +122,21 @@ element._samplesChanged = require( './observers/samples.js' );
 
 element._manipulateChanged = require( './observers/manipulate.js' );
 
+
+// MANIPULATE //
+
+element._computeDefaultStep = require( './manipulate/computeDefaultStep.js' );
+
+// PUBLIC CONTROL METHODS //
+
+element.addControl = require( './manipulate/addControl.js' );
+
+element.removeControl = require( './manipulate/removeControl.js' );
+
+element.addControls = require( './manipulate/addControls' );
+
+element.resetControls = require( './manipulate/resetControls.js' );
+
 // UTILS //
 
 element._graphWidth = require( './utils/graphWidth.js' );
@@ -121,6 +146,7 @@ element._graphHeight = require( './utils/graphHeight.js' );
 element._xDomain = require( './utils/xDomain.js' );
 
 element._yDomain = require( './utils/yDomain.js' );
+
 
 // EXPORTS //
 
