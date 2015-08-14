@@ -42,14 +42,30 @@
 			'step':1
 		},
 		{
+			'name': 'log',
+			'choices': [ false, true ]
+		},
+		{
 			'name': 'width',
 			'min': 400,
 			'max': 800,
 			'value': 400
+		},
+		{
+			'name': 'xAxisOrient',
+			'choices': [
+				'bottom',
+				'top'
+			]
+		},
+		{
+			'name': 'color',
+			'value': 'red'
 		}
 	]);
 	el.fun = function( x ) {
-		return this.a * Math.pow( x, 2 ) + this.b;
+		var ret = this.a * Math.pow( x, 2 ) + this.b;
+		return ( this.log ) ? Math.log( ret ) : ret;
 	};
 
 })();

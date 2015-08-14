@@ -32,3 +32,25 @@ h1 {
 	letter-spacing: -.018em;
 	position: relative;
 }
+
+paper-menu {
+	display: block;
+}
+
+paper-dropdown-menu {
+	text-align: left;
+	margin: auto;
+	width: 180px;
+}
+
+paper-dropdown-menu.letters {
+	width: 90px;
+}
+
+paper-tabs {
+	width: 400px;
+}
+
+.horizontal-section {
+	text-align: center;
+}

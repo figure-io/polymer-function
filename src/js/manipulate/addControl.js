@@ -2,7 +2,9 @@
 
 // MODULES //
 
-var isObject = require( 'validate.io-object' );
+var isArray = require( 'validate.io-array' ),
+	isBooleanArray = require( 'validate.io-boolean-primitive-array' ),
+	isObject = require( 'validate.io-object' );
 
 
 // ADD CONTROL //
@@ -23,10 +25,8 @@ function addControl( config ) {
 		throw( err );
 	}
 
-	if ( !(config.hasOwnProperty( 'name' ) &&
-		config.hasOwnProperty( 'min' ) && config.hasOwnProperty( 'max' ) )
-	) {
-		err = new Error( 'addControl::input argument must have `name`, min` and `max` properties. Keys: `' + Object.keys( config) );
+	if ( !(config.hasOwnProperty( 'name' ) ) ) {
+		err = new Error( 'addControl::input argument must have `name` property. Keys: `' + Object.keys( config) );
 		throw( err );
 	}
 
@@ -38,12 +38,45 @@ function addControl( config ) {
 		}
 	}
 
-	// Set default value if not set by user
-	if ( !config.value ) {
-		config.value = ( config.max - config.min ) / 2;
+	// Control element should be a slider:
+	if ( config.hasOwnProperty( 'min' ) && config.hasOwnProperty( 'max' ) ) {
+		// Set default value if not set by user
+		if ( !config.value ) {
+			config.value = ( config.max - config.min ) / 2;
+		}
+		this.push( 'manipulate', config );
+		return;
 	}
 
-	this.push( 'manipulate', config );
+	// Control element should be a checkbox
+	if ( config.hasOwnProperty( 'choices' ) && isBooleanArray( config.choices ) ) {
+		if ( !config.value ) {
+			config.value = config.choices[ 0 ];
+		}
+		this.push( 'manipulate', config );
+		return;
+	}
+
+	// Control element should be a dropdown menu:
+	if ( config.hasOwnProperty( 'choices' ) ) {
+		if ( !isArray( config.choices ) ) {
+			err = new Error( 'addControl::choices options must be an Array. Value: `' + config.choices + '`.' );
+			throw( err );
+		}
+		// Set default value if not set by user
+		if ( !config.value ) {
+			config.value = 0;
+		}
+		this.push( 'manipulate', config );
+		return;
+	}
+
+	// Control element should be an input field:
+	if ( config.hasOwnProperty( 'value' ) ) {
+		this.push( 'manipulate', config );
+		return;
+	}
+
 } // end FUNCTION addControl()
 
 // EXPORTS //

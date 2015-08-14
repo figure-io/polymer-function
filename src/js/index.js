@@ -67,8 +67,13 @@ element._addListeners = require( './listeners/add.js' );
 
 element._removeListeners = require( './listeners/remove.js' );
 
+element.onInputChange = require( './listeners/inputChange.js' );
+
 element.onSliderChange = require( './listeners/sliderChange.js' );
 
+element.onDropdownClose = require( './listeners/dropdownClose.js' );
+
+element.onCheckboxChange = require( './listeners/checkboxChange.js' );
 
 // OBSERVERS //
 
@@ -126,6 +131,14 @@ element._manipulateChanged = require( './observers/manipulate.js' );
 // MANIPULATE //
 
 element._computeDefaultStep = require( './manipulate/computeDefaultStep.js' );
+
+element._isSliderControl = require( './manipulate/isSliderControl.js' );
+
+element._isCheckboxControl = require( './manipulate/isCheckboxControl.js' );
+
+element._isDropdownControl = require( './manipulate/isDropdownControl.js' );
+
+element._isInputField = require( './manipulate/isInputField.js' );
 
 // PUBLIC CONTROL METHODS //
 
