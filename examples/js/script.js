@@ -40,6 +40,12 @@
 			'min':0,
 			'max':30,
 			'step':1
+		},
+		{
+			'name': 'width',
+			'min': 400,
+			'max': 800,
+			'value': 400
 		}
 	]);
 	el.fun = function( x ) {
