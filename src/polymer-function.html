@@ -35,24 +35,32 @@
 				<h1>Controls:</h1>
 				<div id="controlElems">
 					<template is="dom-repeat" filter="_isSliderControl" items="{{manipulate}}">
-						<div>{{item.name}}</div>
-						<paper-slider class="slider" step="[[_computeDefaultStep(item)]]" min="{{item.min}}" max="{{item.max}}" value="{{item.value}}"
-						editable="true" on-change="onSliderChange"></paper-slider>
+						<div class="controlElem">
+							<div>{{item.name}}</div>
+							<paper-slider class="slider" step="[[_computeDefaultStep(item)]]" min="{{item.min}}" max="{{item.max}}" value="{{item.value}}"
+							editable="true" on-change="onSliderChange"></paper-slider>
+						</div>
 					</template>
 					<template is="dom-repeat" filter="_isCheckboxControl" items="{{manipulate}}">
-						<paper-checkbox on-change="onCheckboxChange" checked="{{item.value}}">{{item.name}}</paper-checkbox>
+						<div class="controlElem">
+							<paper-checkbox class="checkboxElem" on-change="onCheckboxChange" checked="{{item.value}}">{{item.name}}</paper-checkbox>
+						</div>
 					</template>
 					<template is="dom-repeat" filter="_isDropdownControl" items="{{manipulate}}">
-						<paper-dropdown-menu selected="{{item.value}}" label="{{item.name}}" on-iron-activate="onDropdownClose">
-							<paper-menu class="dropdown-content">
-								<template is="dom-repeat" items="[[item.choices]]" as="choice">
-									<paper-item>{{choice}}</paper-item>
-								</template>
-							</paper-menu>
-						</paper-dropdown-menu>
+						<div class="controlElem">
+							<paper-dropdown-menu selected="{{item.value}}" label="{{item.name}}" on-iron-activate="onDropdownClose">
+								<paper-menu class="dropdown-content">
+									<template is="dom-repeat" items="[[item.choices]]" as="choice">
+										<paper-item>{{choice}}</paper-item>
+									</template>
+								</paper-menu>
+							</paper-dropdown-menu>
+						</div>
 					</template>
 					<template is="dom-repeat" filter="_isInputField" items="{{manipulate}}">
-						<paper-input on-value-changed="onInputChange" label="{{item.name}}" value="{{item.value}}"></paper-input>
+						<div class="controlElem">
+							<paper-input on-value-changed="onInputChange" label="{{item.name}}" value="{{item.value}}"></paper-input>
+						</div>
 					</template>
 				</div>
 			</paper-material>
