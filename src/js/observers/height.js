@@ -59,9 +59,6 @@ function heightChanged( newVal, oldVal ) {
 		// [7] Update the paths:
 		this.$.paths.attr( 'd', this._line );
 
-		// [8] Update the annotations:
-		this.$.annotationMarkers.attr( 'd', this._triangle );
-		this.$.annotationLines.attr( 'd', this._vline );
 	}
 	this.fire( 'height', {
 		'type': 'change'

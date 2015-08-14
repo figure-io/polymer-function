@@ -56,9 +56,6 @@ function widthChanged( newVal, oldVal ) {
 		// [6] Update the paths:
 		this.$.paths.attr( 'd', this._line );
 
-		// [7] Update the annotations:
-		this.$.annotationMarkers.attr( 'd', this._triangle );
-		this.$.annotationLines.attr( 'd', this._vline );
 	}
 	this.fire( 'width', {
 		'type': 'change'
